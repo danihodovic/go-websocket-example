@@ -14,7 +14,6 @@
         #chat-container {
             margin: 0 auto;
             width: 40%;
-            height: 500px;
             border: 1px solid grey;
         }
 
@@ -22,6 +21,11 @@
             width: 100%;
             position: relative;
             bottom: 0;
+        }
+
+        #message-container {
+            overflow-y: auto;
+            height: 500px;
         }
 
         .message {
@@ -64,6 +68,8 @@
 
     websock.onmessage = function(payload) {
         $msgContainer.append('<p class="message">' + payload.data + '</p>')
+        //Scroll to the bottom when new messages are appended
+        $msgContainer.scrollTop($msgContainer[0].scrollHeight)
     }
 </script>
 
