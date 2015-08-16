@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>WebSockets with Go</title>
+    <style>
+        *,
+        *:before,
+        *:after {
+            box-sizing: border-box;
+        }
+
+        #chat-container {
+            margin: 0 auto;
+            width: 40%;
+            height: 500px;
+            border: 1px solid grey;
+        }
+
+        #write-container {
+            width: 100%;
+            position: relative;
+            bottom: 0;
+        }
+
+        .message {
+            word-wrap: break-word;
+        }
+    </style>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+</head>
+
+<body>
+    <div id="chat-container">
+        <textarea id="write-container" placeholder="Enter your message here..." autofocus></textarea>
+        <div id="message-container"></div>
+    </div>
+</body>
+
+<script>
+    // This has to match whatever handler the websockets are served on
+    var websock = new WebSocket("ws://" + window.location.host + "/sock")
+
+    var $msgContainer = $("#message-container")
+    var $writeContainer = $("#write-container")
+
+    //If enter is pressed, send msg
+    $writeContainer.on("keyup", function(e) {
+        if (e.keyCode == 13) {
+            var msg = $writeContainer.val()
+            if (msg.length > 0) {
+                $writeContainer.val("")
+                websock.send(msg)
+            }
+        }
+    })
+
+    $writeContainer.on("click", function(e) {
+        var msg = $writeContainer.val()
+        $writeContainer.val("")
+        websock.send(msg)
+    })
+
+    websock.onmessage = function(payload) {
+        $msgContainer.append('<p class="message">' + payload.data + '</p>')
+    }
+</script>
+
+</html>
